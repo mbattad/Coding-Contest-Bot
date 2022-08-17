@@ -1,6 +1,8 @@
 const config = require('./config.json');
 const path = require('node:path');
 const fs = require('node:fs');
+const SQLITE = require('better-sqlite3');
+const db = new SQLITE('./db/data.db');
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 
 const client = new Client({
@@ -20,6 +22,17 @@ for (const file of commandFiles) {
 }
 
 client.on("ready", () => {
+  //initialize the database if it doesn't exist
+  const participants = db.prepare("SELECT * FROM Participants").all();
+  console.log('found participants:');
+  for(u of participants)
+  {
+	console.log(`\t${u['username']}`);
+  }
+  
+  db.pragma("synchronous = 1");
+  db.pragma("journal_mode = wal");
+
   console.log("I am ready!");
 });
 

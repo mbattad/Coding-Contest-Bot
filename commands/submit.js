@@ -9,6 +9,6 @@ module.exports = {
     async execute(interaction) {
         const question = interaction.options.getString('question');
         const solution = interaction.options.getInteger('solution');
-        await interaction.reply(`Answer to ${question.toLowerCase()}: ${solution}`);
+        await interaction.reply(`Submitted answer to ${question.toLowerCase()}: ${solution}`);
     },
 }
