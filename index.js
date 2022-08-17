@@ -1,5 +1,5 @@
-const { REST, Routes } = require('discord.js');
 const config = require('./config.json');
+const { REST, Routes } = require('discord.js');
 
 const commands = [
   {
@@ -8,7 +8,7 @@ const commands = [
   },
 ];
 
-const rest = new REST({ version: '10' }).setToken('WhTubR1Ai2bShR-O-oYtu3Z0HxxliKpj');
+const rest = new REST({ version: '10' }).setToken(config.botToken);
 
 (async () => {
   try {
@@ -24,10 +24,23 @@ const rest = new REST({ version: '10' }).setToken('WhTubR1Ai2bShR-O-oYtu3Z0Hxxli
 
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+  ],
+  partials: [Partials.Channel] });
 
 client.on("ready", () => {
   console.log("I am ready!");
+});
+
+client.on("messageCreate", (message) => {
+  console.log("received");
+  if (message.content.startsWith("ping")) {
+    message.channel.send("pong!");
+  }
 });
 
 client.on('interactionCreate', async interaction => {
@@ -38,4 +51,4 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
-client.login(config.token);
+client.login(config.botToken);
