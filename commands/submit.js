@@ -9,6 +9,8 @@ module.exports = {
     async execute(interaction) {
         const question = interaction.options.getString('question');
         const solution = interaction.options.getInteger('solution');
+
+        //TODO db support
         await interaction.reply(`Submitted answer to ${question.toLowerCase()}: ${solution}`);
     },
 }

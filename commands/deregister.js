@@ -21,6 +21,7 @@ module.exports = {
                 WHERE (${participantTable.cols[0]}, ${participantTable.cols[1]}) = (\'${un}\', \'${disc}\')`
             ).run();
 
+            // TODO add confirmation check
             if(info.changes > 0)
             {
                 await interaction.reply({content: `Deregistered ${un}#${disc} from the contest.\nSorry to see you go :heart:`, ephemeral: true});
