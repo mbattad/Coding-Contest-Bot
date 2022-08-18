@@ -1,5 +1,3 @@
-const { Role } = require("discord.js");
-
 module.exports = {
     roleInfo: {
         name: "Fall 2022 Countdown Contest",

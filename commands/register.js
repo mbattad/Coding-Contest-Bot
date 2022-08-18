@@ -1,8 +1,8 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { participantTable } = require('../config');
+const { roleInfo } = require('../role');
 
 const SQLITE = require('better-sqlite3');
-const { roleInfo } = require('../role');
 const db = new SQLITE('./db/data.db');
 
 module.exports = {
@@ -22,15 +22,9 @@ module.exports = {
             ).run();
 
             newRole = interaction.guild.roles.cache.find(role => role.name === roleInfo.name);
-            if(newRole)
+            if(!newRole)
             {
-                console.log("role exists");
-            }
-            else
-            {
-                console.log("role does not exist");
                 newRole = interaction.guild.roles.create(roleInfo);
-                console.log("created role");
             }
             interaction.member.roles.add(newRole);
 
