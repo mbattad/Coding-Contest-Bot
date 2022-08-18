@@ -1,10 +1,10 @@
-const config = require('./config.json');
+const { botToken, participantTable, answerkeyTable, submissionsTable } = require('./config');
 const path = require('node:path');
 const fs = require('node:fs');
 const SQLITE = require('better-sqlite3');
-const db = new SQLITE('./db/data.db');
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 
+const db = new SQLITE('./db/data.db');
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds
@@ -20,14 +20,14 @@ for (const file of commandFiles) {
 	const command = require(filePath);
 	client.commands.set(command.data.name, command);
 }
-
+  
 client.on("ready", () => {
   //initialize the database if it doesn't exist
-  const participants = db.prepare("SELECT * FROM Participants").all();
+  const participants = db.prepare(`SELECT * FROM ${participantTable.name}`).all();
   console.log('found participants:');
   for(u of participants)
   {
-	console.log(`\t${u['username']}`);
+	console.log(`\t${u[participantTable.cols[0]]}`);
   }
   
   db.pragma("synchronous = 1");
@@ -51,4 +51,4 @@ client.on('interactionCreate', async interaction => {
 	}
 });
 
-client.login(config.botToken);
+client.login(botToken);
