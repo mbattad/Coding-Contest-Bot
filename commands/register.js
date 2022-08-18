@@ -8,15 +8,19 @@ module.exports = {
     data: new SlashCommandBuilder()
 	    .setName('register')
 	    .setDescription('Includes your submissions in the leaderboard!'),
-    async execute(interaction) {
+    async execute(interaction)
+    {
         const newUser = interaction.member.user;
-        const username = newUser.username;
-        const discriminator = newUser.discriminator;
+        const un = newUser.username;
+        const disc = newUser.discriminator;
 
         try
         {
-            db.prepare(`INSERT INTO ${participantTable.name} (${participantTable.cols[0]}, ${participantTable.cols[1]}) VALUES (\'${username}\', \'${discriminator}\')`).run();
-            await interaction.reply({content: `Register received from ${username}#${discriminator}`, ephemeral: true});
+            db.prepare(
+                `INSERT INTO ${participantTable.name} (${participantTable.cols[0]}, ${participantTable.cols[1]}) VALUES (\'${un}\', \'${disc}\')`
+            ).run();
+
+            await interaction.reply({content: `Registered ${un}#${disc} for the contest.\nHappy coding :dancer:`, ephemeral: true});
         }
         catch(error)
         {
