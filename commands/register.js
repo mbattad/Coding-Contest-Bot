@@ -34,12 +34,9 @@ module.exports = {
             }
             catch(error)
             {
-                if(error instanceof SQLITE.SqliteError)
+                if(error instanceof SQLITE.SqliteError && error.code == "SQLITE_CONSTRAINT_PRIMARYKEY")
                 {
-                    if(error.code == "SQLITE_CONSTRAINT_PRIMARYKEY")
-                    {
-                        await interaction.reply({content: `You've already registered for the contest!`, ephemeral: true});
-                    }
+                    await interaction.reply({content: `You've already registered for the contest!`, ephemeral: true});
                 }
                 else
                 {
