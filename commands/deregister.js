@@ -11,34 +11,41 @@ module.exports = {
 	    .setDescription('Removes you from the contest'),
     async execute(interaction)
     {
-        const user = interaction.member.user;
-        const un = user.username;
-        const disc = user.discriminator;
+        const user = interaction.member;
+        const un = user.user.username;
+        const disc = user.user.discriminator;
+        compRole = user.roles.cache.find(role => role.name === roleInfo.name);
 
-        try
+        if(compRole)
         {
-            // TODO add confirmation check
-            info = db.prepare(
-                `DELETE FROM ${participantTable.name} 
-                WHERE (${participantTable.cols[0]}, ${participantTable.cols[1]}) = (\'${un}\', \'${disc}\')`
-            ).run();
+            try
+            {
+                // TODO add confirmation check
+                info = db.prepare(
+                    `DELETE FROM ${participantTable.name} 
+                    WHERE (${participantTable.cols[0]}, ${participantTable.cols[1]}) = (\'${un}\', \'${disc}\')`
+                ).run();
 
-            compRole = interaction.guild.roles.cache.find(role => role.name === roleInfo.name);
-            interaction.member.roles.remove(compRole, "User has deregistered from the contest");
-            
-            if(info.changes > 0)
-            {
-                await interaction.reply({content: `Deregistered ${un}#${disc} from the contest.\nSorry to see you go :heart:`, ephemeral: true});
+                user.roles.remove(compRole, `${un}#${disc} used /deregister command`);
+                
+                if(info.changes > 0)
+                {
+                    await interaction.reply({content: `Deregistered ${un}#${disc} from the contest.\nSorry to see you go :heart:`, ephemeral: true});
+                }
+                else
+                {
+                    await interaction.reply({content: `You aren't registered for the contest.`, ephemeral: true});
+                }
             }
-            else
+            catch(error)
             {
-                await interaction.reply({content: `You aren't registered for the contest.`, ephemeral: true});
+                console.log(error);
+                await interaction.reply({content: `${error.name} while deregistering; go yell at Mia.`, ephemeral: true});
             }
         }
-        catch(error)
+        else
         {
-            console.log(error);
-            await interaction.reply({content: `${error.name} while deregistering; go yell at Mia.`, ephemeral: true});
+            await interaction.reply({content: `You aren't registered for the contest.`, ephemeral: true});
         }
     },
 }

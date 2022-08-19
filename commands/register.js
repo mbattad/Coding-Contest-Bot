@@ -11,38 +11,45 @@ module.exports = {
 	    .setDescription('Includes your submissions in the leaderboard!'),
     async execute(interaction)
     {
-        const newUser = interaction.member.user;
-        const un = newUser.username;
-        const disc = newUser.discriminator;
+        const newUser = interaction.member;
+        const un = newUser.user.username;
+        const disc = newUser.user.discriminator;
 
-        try
+        if(!newUser.roles.cache.some(role => role.name === roleInfo.name))
         {
-            db.prepare(
-                `INSERT INTO ${participantTable.name} (${participantTable.cols[0]}, ${participantTable.cols[1]}) VALUES (\'${un}\', \'${disc}\')`
-            ).run();
-
-            newRole = interaction.guild.roles.cache.find(role => role.name === roleInfo.name);
-            if(!newRole)
+            try
             {
-                newRole = interaction.guild.roles.create(roleInfo);
-            }
-            interaction.member.roles.add(newRole);
-
-            await interaction.reply({content: `Registered ${un}#${disc} for the contest.\nHappy coding :dancer:`, ephemeral: true});
-        }
-        catch(error)
-        {
-            if(error instanceof SQLITE.SqliteError)
-            {
-                if(error.code == "SQLITE_CONSTRAINT_PRIMARYKEY")
+                db.prepare(
+                    `INSERT INTO ${participantTable.name} (${participantTable.cols[0]}, ${participantTable.cols[1]}) VALUES (\'${un}\', \'${disc}\')`
+                ).run();
+    
+                newRole = interaction.guild.roles.cache.find(role => role.name === roleInfo.name);
+                if(!newRole)
                 {
-                    await interaction.reply({content: `You've already registered for the contest!`, ephemeral: true});
+                    newRole = interaction.guild.roles.create(roleInfo);
+                }
+                interaction.member.roles.add(newRole, `${un}#${disc} used /register command`);
+    
+                await interaction.reply({content: `Registered ${un}#${disc} for the contest.\nHappy coding :dancer:`, ephemeral: true});
+            }
+            catch(error)
+            {
+                if(error instanceof SQLITE.SqliteError)
+                {
+                    if(error.code == "SQLITE_CONSTRAINT_PRIMARYKEY")
+                    {
+                        await interaction.reply({content: `You've already registered for the contest!`, ephemeral: true});
+                    }
+                }
+                else
+                {
+                    await interaction.reply({content: `${error.name} while registering; go yell at Mia.`, ephemeral: true});
                 }
             }
-            else
-            {
-                await interaction.reply({content: `${error.name} while registering; go yell at Mia.`, ephemeral: true});
-            }
+        }
+        else
+        {
+            await interaction.reply({content: `You've already registered for the contest!`, ephemeral: true});
         }
     },
 }
