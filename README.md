@@ -1,10 +1,10 @@
 # Coding Contest Helper Bot
-*(last edit on 18/08/22)*
+*(last edit on 19/08/22)*
 
 A helper bot to manage coding contests in a Discord server. Currently only one contest at a time is supported.
 
-We assume "advent of code" style judging, in which questions provide a problem statement and **one input**, which a user
-solves independently and submits the contents of their program's output.
+We assume "advent of code" style judging, in which questions provide a problem statement and **one input**. Users
+write their solutions independently, then can submit their program's output.
 
 ## Functions
 The bot can:
