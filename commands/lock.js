@@ -8,6 +8,7 @@ module.exports = {
         .addStringOption(option => option.setName('question').setDescription('Enter the question').setRequired(true)),
     async execute(interaction)
     {
+        //TODO role support, db support
         await interaction.reply("lock received");
     }
 }
