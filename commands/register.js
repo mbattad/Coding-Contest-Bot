@@ -38,20 +38,20 @@ module.exports = {
                         AND ${participantTable.cols[1]} = ${disc}`
                     ).run();
                 }
+                
+                newRole = interaction.guild.roles.cache.find(role => role.name === roleInfo.name);
+                if(!newRole)
+                {
+                    newRole = interaction.guild.roles.create(roleInfo);
+                }
+
+                interaction.member.roles.add(newRole, `${un}#${disc} used /register command`);
+                await interaction.reply({content: `Registered ${un}#${disc} for the contest.\nHappy coding :dancer:`, ephemeral: true});
             }
             catch(error)
             {
                 await interaction.reply({content: `${error.name} while registering; go yell at Mia.`, ephemeral: true});
             }
-            
-            newRole = interaction.guild.roles.cache.find(role => role.name === roleInfo.name);
-            if(!newRole)
-            {
-                newRole = interaction.guild.roles.create(roleInfo);
-            }
-
-            interaction.member.roles.add(newRole, `${un}#${disc} used /register command`);
-            await interaction.reply({content: `Registered ${un}#${disc} for the contest.\nHappy coding :dancer:`, ephemeral: true});
         }
         else
         {

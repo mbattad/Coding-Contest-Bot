@@ -26,15 +26,15 @@ module.exports = {
                     WHERE ${participantTable.cols[0]} = '${un}'
                     AND ${participantTable.cols[1]} = ${disc}`
                 ).run();
+                
+                user.roles.remove(compRole, `${un}#${disc} used /deregister command`);
+                await interaction.reply({content: `Deregistered ${un}#${disc} from the contest.\nSorry to see you go :heart:`, ephemeral: true});
             }
             catch(error)
             {
                 console.log(error);
                 await interaction.reply({content: `${error.name} occured while deregistering; go yell at Mia.`, ephemeral: true});
             }
-
-            user.roles.remove(compRole, `${un}#${disc} used /deregister command`);
-            await interaction.reply({content: `Deregistered ${un}#${disc} from the contest.\nSorry to see you go :heart:`, ephemeral: true});
         }
         else
         {
