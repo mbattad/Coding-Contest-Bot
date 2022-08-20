@@ -20,28 +20,21 @@ module.exports = {
         {
             try
             {
-                // TODO add confirmation check
-                info = db.prepare(
-                    `DELETE FROM ${participantTable.name} 
-                    WHERE (${participantTable.cols[0]}, ${participantTable.cols[1]}) = (\'${un}\', \'${disc}\')`
+                db.prepare(
+                    `UPDATE ${participantTable.name}
+                    SET ${participantTable.cols[3]} = 0
+                    WHERE ${participantTable.cols[0]} = '${un}'
+                    AND ${participantTable.cols[1]} = ${disc}`
                 ).run();
-
-                user.roles.remove(compRole, `${un}#${disc} used /deregister command`);
-                
-                if(info.changes > 0)
-                {
-                    await interaction.reply({content: `Deregistered ${un}#${disc} from the contest.\nSorry to see you go :heart:`, ephemeral: true});
-                }
-                else
-                {
-                    await interaction.reply({content: `You aren't registered for the contest.`, ephemeral: true});
-                }
             }
             catch(error)
             {
                 console.log(error);
-                await interaction.reply({content: `${error.name} while deregistering; go yell at Mia.`, ephemeral: true});
+                await interaction.reply({content: `${error.name} occured while deregistering; go yell at Mia.`, ephemeral: true});
             }
+
+            user.roles.remove(compRole, `${un}#${disc} used /deregister command`);
+            await interaction.reply({content: `Deregistered ${un}#${disc} from the contest.\nSorry to see you go :heart:`, ephemeral: true});
         }
         else
         {

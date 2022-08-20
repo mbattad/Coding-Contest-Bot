@@ -15,15 +15,17 @@ The bot can:
 Features in progress:
 - Score users' answers
 - Let users request solutions
+- Show each participant's score in a leaderboard
 
 ## Command Glossary
 ### /register
-This command adds a user to the table of participants and assigns them a role that lets them participate in the contest.
+This command assigns the user a role that lets them participate in the contest. If they aren't in the table of participants yet, they are added
+with an initial score of 0.
 
 ![/register command](readme-images/register_example.png)
 
 ### /deregister
-This command deletes a user's entry in the table of participants and removes their participant role.
+This command removes a user's participant role. In case they decide to register again, their records are kept in the table.
 
 ![/deregister command](readme-images/deregister_example.png)
 
@@ -31,3 +33,7 @@ This command deletes a user's entry in the table of participants and removes the
 This command takes two arguments: a question identifier and a solution. The user's response to the indicated question is recorded in a table.
 
 On a correct answer, the submitter will be allowed to view discussion channels for the question where they can talk about how they solved it.
+
+### /solve [question]
+This command takes a question identifier as an argument. The user will see the answer to the question and be prevented from submitting
+any more attempts to it, but will get access to that question's discussion channel.

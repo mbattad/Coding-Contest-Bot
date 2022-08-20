@@ -19,30 +19,39 @@ module.exports = {
         {
             try
             {
-                db.prepare(
-                    `INSERT INTO ${participantTable.name} (${participantTable.cols[0]}, ${participantTable.cols[1]}) VALUES (\'${un}\', \'${disc}\')`
-                ).run();
-    
-                newRole = interaction.guild.roles.cache.find(role => role.name === roleInfo.name);
-                if(!newRole)
+                if(!db.prepare(
+                    `SELECT * FROM ${participantTable.name}
+                    WHERE ${participantTable.cols[0]} = '${un}'
+                    AND ${participantTable.cols[1]} = ${disc}`
+                ).get())
                 {
-                    newRole = interaction.guild.roles.create(roleInfo);
-                }
-                interaction.member.roles.add(newRole, `${un}#${disc} used /register command`);
-    
-                await interaction.reply({content: `Registered ${un}#${disc} for the contest.\nHappy coding :dancer:`, ephemeral: true});
-            }
-            catch(error)
-            {
-                if(error instanceof SQLITE.SqliteError && error.code == "SQLITE_CONSTRAINT_PRIMARYKEY")
-                {
-                    await interaction.reply({content: `You've already registered for the contest!`, ephemeral: true});
+                    db.prepare(
+                        `INSERT INTO ${participantTable.name} (${participantTable.cols[0]}, ${participantTable.cols[1]}) VALUES (\'${un}\', \'${disc}\')`
+                    ).run();
                 }
                 else
                 {
-                    await interaction.reply({content: `${error.name} while registering; go yell at Mia.`, ephemeral: true});
+                    db.prepare(
+                        `UPDATE ${participantTable.name}
+                        SET ${participantTable.cols[3]} = 1
+                        WHERE ${participantTable.cols[0]} = '${un}'
+                        AND ${participantTable.cols[1]} = ${disc}`
+                    ).run();
                 }
             }
+            catch(error)
+            {
+                await interaction.reply({content: `${error.name} while registering; go yell at Mia.`, ephemeral: true});
+            }
+            
+            newRole = interaction.guild.roles.cache.find(role => role.name === roleInfo.name);
+            if(!newRole)
+            {
+                newRole = interaction.guild.roles.create(roleInfo);
+            }
+
+            interaction.member.roles.add(newRole, `${un}#${disc} used /register command`);
+            await interaction.reply({content: `Registered ${un}#${disc} for the contest.\nHappy coding :dancer:`, ephemeral: true});
         }
         else
         {

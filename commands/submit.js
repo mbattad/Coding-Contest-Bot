@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { submissionsTable } = require('../config');
+const { solvedTable } = require('../config');
 const { roleInfo } = require('../role');
 
 const SQLITE = require('better-sqlite3');
@@ -20,17 +20,29 @@ module.exports = {
         {
             try
             {
-                now = new Date(Date.now());
-
-                db.prepare(
-                    `INSERT INTO ${submissionsTable.name}
-                    (${submissionsTable.cols[1]}, ${submissionsTable.cols[2]}, ${submissionsTable.cols[3]}, ${submissionsTable.cols[4]}, ${submissionsTable.cols[5]})
-                    VALUES ('${submitter.user.username}', ${submitter.user.discriminator}, '${question}', ${solution}, ${now.getTime()})`
-                ).run();
-
-                receipt = `**Submitter:** ${submitter.user.username}#${submitter.user.discriminator}\n**Question:** ${question}\n**Solution:** ${solution}`;
-                timestamp = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} at ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-                await interaction.reply(`Submission received!\n${receipt}\n${timestamp}`);
+                if(db.prepare(
+                    `SELECT * FROM ${solvedTable.name}
+                    WHERE ${solvedTable.cols[0]} = '${submitter.user.username}'
+                    AND ${solvedTable.cols[1]} = ${submitter.user.discriminator}
+                    AND ${solvedTable.cols[2]} = '${question}'`
+                ).get())
+                {
+                    await interaction.reply(`You can't submit answers to this question anymore.`);
+                }
+                else
+                {
+                    now = new Date(Date.now());
+    
+                    db.prepare(
+                        `INSERT INTO ${solvedTable.name}
+                        (${solvedTable.cols[0]}, ${solvedTable.cols[1]}, ${solvedTable.cols[2]})
+                        VALUES ('${submitter.user.username}', ${submitter.user.discriminator}, '${question}')`
+                    ).run();
+    
+                    receipt = `**Submitter:** ${submitter.user.username}#${submitter.user.discriminator}\n**Question:** ${question}\n**Solution:** ${solution}`;
+                    timestamp = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} at ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+                    await interaction.reply(`Submission received!\n${receipt}\n${timestamp}`);
+                }
             }
             catch(error)
             {

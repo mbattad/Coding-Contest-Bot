@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { submissionsTable } = require('../config');
+const { solvedTable } = require('../config');
 const { roleInfo } = require('../role');
 
 const SQLITE = require('better-sqlite3');
@@ -9,7 +9,7 @@ module.exports =
 {
     data: new SlashCommandBuilder()
         .setName('solve')
-        .setDescription('Reveals the answer to a question (no more submissions to this question will be accepted from you)')
+        .setDescription('Reveals the answer to a question (you will not be able to attempt this question anymore)')
         .addStringOption(option => option.setName('question').setDescription('Enter the question you want the solution to').setRequired(true)),
     async execute(interaction)
     {
