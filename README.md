@@ -10,14 +10,14 @@ write their solutions independently, then can submit their program's output.
 The bot can:
 - Register participants for a contest
 - Deregister participants for a contest
-- Submit responses to a question (WIP)
+- Submit responses to a question
 
 ## Command Glossary
 ### /register
-This command adds a user to the table of participants. Soon it will assign them a role to be notified when questions are posted.
+This command adds a user to the table of participants and assigns them a role that lets them participate in the contest.
 
 ### /deregister
-This command deletes a user's entry in the table of participants.
+This command deletes a user's entry in the table of participants and removes their participant role.
 
 ### /submit [question] [solution]
-This command takes two arguments: a question identifier and a solution. It currently doesn't interact with the database.
+This command takes two arguments: a question identifier and a solution. The user's response to the indicated question is recorded in a table.
