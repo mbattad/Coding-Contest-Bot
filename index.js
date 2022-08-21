@@ -7,7 +7,8 @@ const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js'
 const db = new SQLITE('./db/data.db');
 const client = new Client({
   intents: [
-    GatewayIntentBits.Guilds
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers
   ],
   partials: [Partials.Channel] });
 

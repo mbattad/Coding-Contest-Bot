@@ -53,16 +53,15 @@ module.exports = {
 
                         //TODO calculate scoring based on time & difficulty
 
-                        //TODO grant user access to discussion channel
-                        interaction.guild.channels.fetch(questionChannels[question])
-                        .then(channel => channel.permissionOverwrites.create(submitter, ['SEND_MESSAGES']))
-                        .catch(await interaction.reply(`${error} occurred while managing permissions.`));
+                        //TODO test this with other users lol
+                        const discussion = interaction.guild.channels.cache.get(questionChannels[question]);
+                        discussion.permissionOverwrites.edit(submitter, { ViewChannel: true });
                         
-                        await interaction.reply(`Correct answer!\nReceived at ${timestamp}`);
+                        await interaction.reply({content: `Correct answer!\nReceived at ${timestamp}`, ephemeral: true});
                     }
                     else
                     {
-                        await interaction.reply(`Incorrect answer. Try again!`);
+                        await interaction.reply({content: `Incorrect answer. Try again!`, ephemeral: true});
                     }
                 }
             }

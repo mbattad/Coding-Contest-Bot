@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { solvedTable } = require('../config');
+const { solvedTable, questionChannels } = require('../config');
 const { roleInfo } = require('../role');
 
 const SQLITE = require('better-sqlite3');
@@ -36,7 +36,8 @@ module.exports =
                     VALUES ('${user.user.username}', ${user.user.discriminator}, '${qId}')`
                 ).run();
 
-                //TODO grant user access to discussion channel
+                const discussion = interaction.guild.channels.cache.get(questionChannels[qId]);
+                discussion.permissionOverwrites.edit(user, { ViewChannel: true });
 
                 await interaction.reply({content: `Received request to solve ${qId} from ${user.user.username}#${user.user.discriminator}`, ephemeral: true});
             }
