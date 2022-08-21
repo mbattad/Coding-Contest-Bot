@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { solvedTable, answerkeyTable } = require('../config');
+const { solvedTable, answerkeyTable, questionChannels } = require('../config');
 const { roleInfo } = require('../role');
 
 const SQLITE = require('better-sqlite3');
@@ -31,10 +31,14 @@ module.exports = {
                 }
                 else
                 {
-                    const correct = db.prepare(
-                        `SELECT ${answerkeyTable.cols[1]} FROM ${answerkeyTable.name}
-                        WHERE ${answerkeyTable.cols[0]} = ${question}`
-                    ).get();
+                    // const correct = db.prepare(
+                    //     `SELECT ${answerkeyTable.cols[1]} FROM ${answerkeyTable.name}
+                    //     WHERE ${answerkeyTable.cols[0]} = ${question}`
+                    // ).get();
+
+                    //PLACEHOLDER WHILE WE WAIT FOR QUESTIONS
+                    correct = solution;
+                    //END PLACEHOLDER
 
                     if(correct == solution)
                     {
@@ -48,6 +52,11 @@ module.exports = {
                         timestamp = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} at ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
 
                         //TODO calculate scoring based on time & difficulty
+
+                        //TODO grant user access to discussion channel
+                        interaction.guild.channels.fetch(questionChannels[question])
+                        .then(channel => channel.permissionOverwrites.create(submitter, ['SEND_MESSAGES']))
+                        .catch(await interaction.reply(`${error} occurred while managing permissions.`));
                         
                         await interaction.reply(`Correct answer!\nReceived at ${timestamp}`);
                     }

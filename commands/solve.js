@@ -36,6 +36,8 @@ module.exports =
                     VALUES ('${user.user.username}', ${user.user.discriminator}, '${qId}')`
                 ).run();
 
+                //TODO grant user access to discussion channel
+
                 await interaction.reply({content: `Received request to solve ${qId} from ${user.user.username}#${user.user.discriminator}`, ephemeral: true});
             }
             catch(error)
