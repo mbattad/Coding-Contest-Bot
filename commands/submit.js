@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { solvedTable } = require('../config');
+const { solvedTable, answerkeyTable } = require('../config');
 const { roleInfo } = require('../role');
 
 const SQLITE = require('better-sqlite3');
@@ -31,17 +31,30 @@ module.exports = {
                 }
                 else
                 {
-                    now = new Date(Date.now());
-    
-                    db.prepare(
-                        `INSERT INTO ${solvedTable.name}
-                        (${solvedTable.cols[0]}, ${solvedTable.cols[1]}, ${solvedTable.cols[2]})
-                        VALUES ('${submitter.user.username}', ${submitter.user.discriminator}, '${question}')`
-                    ).run();
-    
-                    receipt = `**Submitter:** ${submitter.user.username}#${submitter.user.discriminator}\n**Question:** ${question}\n**Solution:** ${solution}`;
-                    timestamp = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} at ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-                    await interaction.reply(`Submission received!\n${receipt}\n${timestamp}`);
+                    const correct = db.prepare(
+                        `SELECT ${answerkeyTable.cols[1]} FROM ${answerkeyTable.name}
+                        WHERE ${answerkeyTable.cols[0]} = ${question}`
+                    ).get();
+
+                    if(correct == solution)
+                    {
+                        db.prepare(
+                            `INSERT INTO ${solvedTable.name}
+                            (${solvedTable.cols[0]}, ${solvedTable.cols[1]}, ${solvedTable.cols[2]})
+                            VALUES ('${submitter.user.username}', ${submitter.user.discriminator}, '${question}')`
+                        ).run();
+
+                        now = new Date(Date.now());
+                        timestamp = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} at ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+
+                        //TODO calculate scoring based on time & difficulty
+                        
+                        await interaction.reply(`Correct answer!\nReceived at ${timestamp}`);
+                    }
+                    else
+                    {
+                        await interaction.reply(`Incorrect answer. Try again!`);
+                    }
                 }
             }
             catch(error)

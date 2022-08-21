@@ -22,7 +22,7 @@ for (const file of commandFiles) {
 }
   
 client.on("ready", () => {
-  //initialize the database if it doesn't exist
+  //TODO initialize the database if it doesn't exist
   const participants = db.prepare(`SELECT * FROM ${participantTable.name}`).all();
   console.log('found participants:');
   for(u of participants)
