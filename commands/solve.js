@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { solvedTable, questionChannels } = require('../config');
-const { roleInfo } = require('../role');
 
 const SQLITE = require('better-sqlite3');
 const db = new SQLITE('./db/data.db');

@@ -1,5 +1,5 @@
 # Coding Contest Helper Bot
-*(last edit on 20/08/22)*
+*(last edit on 22/08/22)*
 
 A helper bot to manage coding contests in a Discord server. Currently only one contest at a time is supported.
 
@@ -14,8 +14,6 @@ The bot can:
 
 Features in progress:
 - Score users' answers
-- Let users request solutions
-- Show each participant's score in a leaderboard
 
 ## Command Glossary
 ### /register
