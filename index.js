@@ -3,6 +3,7 @@ const path = require('node:path');
 const fs = require('node:fs');
 const SQLITE = require('better-sqlite3');
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
+const { solve } = require('./commands/solve');
 
 const db = new SQLITE('./db/data.db');
 const client = new Client({
@@ -38,18 +39,22 @@ client.on("ready", () => {
 });
 
 client.on('interactionCreate', async interaction => {
-  if (!interaction.isChatInputCommand()) return;
-
-	const command = client.commands.get(interaction.commandName);
-
-	if (!command) return;
-
-	try {
-		await command.execute(interaction);
-	} catch (error) {
-		console.error(error);
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-	}
+  if (interaction.isChatInputCommand())
+  {
+    const command = client.commands.get(interaction.commandName);
+    if (!command) return;
+  
+    try
+    {
+      await command.execute(interaction);
+    }
+    catch (error)
+    {
+      console.error(error);
+      await interaction.reply({ content: `${error.name} while executing the command.`, ephemeral: true });
+    }
+  }
+  else return;
 });
 
 client.login(botToken);

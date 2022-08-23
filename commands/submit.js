@@ -53,7 +53,6 @@ module.exports = {
 
                         //TODO calculate scoring based on time & difficulty
 
-                        //TODO test this with other users lol
                         const discussion = interaction.guild.channels.cache.get(questionChannels[question]);
                         discussion.permissionOverwrites.edit(submitter, { ViewChannel: true });
                         
