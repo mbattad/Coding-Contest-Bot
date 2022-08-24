@@ -33,7 +33,7 @@ module.exports = {
                 {
                     db.prepare(
                         `UPDATE ${participantTable.name}
-                        SET ${participantTable.cols[3]} = 1
+                        SET ${participantTable.cols[5]} = 1
                         WHERE ${participantTable.cols[0]} = '${un}'
                         AND ${participantTable.cols[1]} = ${disc}`
                     ).run();
