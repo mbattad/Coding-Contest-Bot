@@ -8,23 +8,43 @@ module.exports =
 {
     data: new SlashCommandBuilder()
         .setName('leaderboard')
-        .setDescription('Shows the top participants of the contest'),
+        .setDescription('Shows the top participants of the contest')
+        .addSubcommand(command => command
+            .setName('points')
+            .setDescription('Get results by number of points')
+            .addIntegerOption(option => option
+                .setName('level')
+                .setDescription('Enter the difficulty level to show results for')
+                .setRequired(true)
+                .addChoices(
+                    {name: "all", value: 0},
+                    {name: "level 1", value: 1},
+                    {name: "level 2", value: 2},
+                    {name: "level 3", value: 3}
+                ))
+            )
+        .addSubcommand(command => command
+            .setName('speed')
+            .setDescription('Get results by completion time')
+            .addStringOption(option => option.setName('question').setDescription('Enter the question to show results for (leave blank to view by average time)'))
+        ),
     async execute(interaction)
     {
         try
         {
             const scores = db.prepare(
-                `SELECT * FROM ${participantTable.name}
-                WHERE ${participantTable.cols[3] = 1}
-                ORDER BY ${participantTable.cols[2]} DESC`
+                `SELECT *, sum(${participantTable.cols[2]} + ${participantTable.cols[3]} + ${participantTable.cols[4]}) AS score FROM ${participantTable.name}
+                GROUP BY ${participantTable.cols[0]}, ${participantTable.cols[1]}
+                ORDER BY score DESC`
             ).all();
             if(scores)
             {
+                //TODO fix leaderboard formatting
                 msg = '**Leaderboard**:';
                 counter = 1;
                 for(user of scores)
                 {
-                    msg += `\n${counter}. ${user[participantTable.cols[0]]}: ${user[participantTable.cols[2]]} points`;
+                    msg += `\n${counter}. ${user[participantTable.cols[0]]}: ${user['score']} points`;
                     counter ++;
                 }
     

@@ -1,5 +1,5 @@
 # Coding Contest Helper Bot
-*(last edit on 22/08/22)*
+*(last edit on 24/08/22)*
 
 A helper bot to manage coding contests in a Discord server. Currently only one contest at a time is supported.
 
@@ -11,6 +11,7 @@ The bot can:
 - Register participants for a contest
 - Deregister participants for a contest
 - Record users' submitted answers
+- Show the top participants in a leaderboard
 
 Features in progress:
 - Score users' answers
@@ -35,3 +36,12 @@ On a correct answer, the submitter will be allowed to view discussion channels f
 ### /solve [question]
 This command takes a question identifier as an argument. The user will see the answer to the question and be prevented from submitting
 any more attempts to it, but will get access to that question's discussion channel.
+
+### /leaderboard
+This command shows a leaderboard of participants. You can use it with the following options:
+- /leaderboard **points** [level]
+    - Ranks the participants based on their score, which only counts correct solutions.
+    - Use the "level" option to specify total score, or score by difficulty level.
+- /leaderboard **speed** [question]
+    - Ranks the participants based on their submission time.
+    - Use the "question" option to see which participants solved a certain question fastest. Leave this blank to rank by average submission time.
