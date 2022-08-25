@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { participantTable, solvedTable } = require('../config');
+const { participantTable, solvedTable, answerkeyTable } = require('../config');
 
 const SQLITE = require('better-sqlite3');
 const db = new SQLITE('./db/data.db');
@@ -14,13 +14,11 @@ module.exports =
             .setDescription('Get results by number of points')
             .addIntegerOption(option => option
                 .setName('level')
-                .setDescription('Enter the difficulty level to show results for')
-                .setRequired(true)
+                .setDescription('Enter the difficulty level to show results for (leave blank to view by total score)')
                 .addChoices(
-                    {name: "all", value: 0},
-                    {name: "level 1", value: 1},
-                    {name: "level 2", value: 2},
-                    {name: "level 3", value: 3}
+                    {name: "level 1", value: 2},
+                    {name: "level 2", value: 3},
+                    {name: "level 3", value: 4}
                 ))
             )
         .addSubcommand(command => command
@@ -36,27 +34,44 @@ module.exports =
             let table, statement, unit;
             if(group === 'points')
             {
+                const lvl = interaction.options.getInteger('level');
+                let sum = `${participantTable.cols[2]} + ${participantTable.cols[3]} + ${participantTable.cols[4]}`;
+                if(lvl)
+                {
+                    sum = `${participantTable.cols[lvl]}`
+                }
+
                 table = participantTable;
                 statement =
-                    `SELECT *, SUM(${participantTable.cols[2]} + ${participantTable.cols[3]} + ${participantTable.cols[4]}) AS score FROM ${participantTable.name}
+                    `SELECT *, SUM(${sum}) AS score FROM ${participantTable.name}
                     GROUP BY ${participantTable.cols[0]}, ${participantTable.cols[1]}
                     ORDER BY score DESC`;
                 unit = `points`;
             }
             else if(group === 'speed')
             {
+                const qId = interaction.options.getString('question');
+                let condition = ``;
+                if(qId)
+                {
+                    condition = `AND ${solvedTable.name}.${solvedTable.cols[2]} = '${qId}'`;
+                }
+
                 table = solvedTable;
                 statement = 
-                    `SELECT *, AVG(${solvedTable.cols[3]}) AS score FROM ${solvedTable.name}
+                    `SELECT *, AVG(${solvedTable.cols[3]} - ${answerkeyTable.cols[2]}) / 3600000 AS score
+                    FROM ${solvedTable.name} LEFT JOIN ${answerkeyTable.name}
+                    ON ${solvedTable.name}.${solvedTable.cols[2]} = ${answerkeyTable.name}.${answerkeyTable.cols[0]}
                     WHERE ${solvedTable.cols[3]}
+                    ${condition}
                     GROUP BY ${solvedTable.cols[0]}, ${solvedTable.cols[1]}
-                    ORDER BY score DESC`;
+                    ORDER BY score ASC`;
 
-                unit = `ms`;
+                unit = `hours`;
             }
 
             const scores = db.prepare(statement).all();
-            if(scores)
+            if(scores.length > 0)
             {
                 //TODO fix leaderboard formatting
                 msg = "**Leaderboard**";
@@ -68,7 +83,7 @@ module.exports =
             }
             else
             {
-                await interaction.reply({content: `No records found.`, ephemeral: true});
+                await interaction.reply({content: `No records found.\nDid you use valid arguments?`, ephemeral: true});
             }
         }
         catch(error)
