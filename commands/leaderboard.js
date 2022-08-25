@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { participantTable } = require('../config');
+const { participantTable, solvedTable } = require('../config');
 
 const SQLITE = require('better-sqlite3');
 const db = new SQLITE('./db/data.db');
@@ -32,22 +32,38 @@ module.exports =
     {
         try
         {
-            const scores = db.prepare(
-                `SELECT *, sum(${participantTable.cols[2]} + ${participantTable.cols[3]} + ${participantTable.cols[4]}) AS score FROM ${participantTable.name}
-                GROUP BY ${participantTable.cols[0]}, ${participantTable.cols[1]}
-                ORDER BY score DESC`
-            ).all();
+            const group = interaction.options.getSubcommand();
+            let table, statement, unit;
+            if(group === 'points')
+            {
+                table = participantTable;
+                statement =
+                    `SELECT *, SUM(${participantTable.cols[2]} + ${participantTable.cols[3]} + ${participantTable.cols[4]}) AS score FROM ${participantTable.name}
+                    GROUP BY ${participantTable.cols[0]}, ${participantTable.cols[1]}
+                    ORDER BY score DESC`;
+                unit = `points`;
+            }
+            else if(group === 'speed')
+            {
+                table = solvedTable;
+                statement = 
+                    `SELECT *, AVG(${solvedTable.cols[3]}) AS score FROM ${solvedTable.name}
+                    WHERE ${solvedTable.cols[3]}
+                    GROUP BY ${solvedTable.cols[0]}, ${solvedTable.cols[1]}
+                    ORDER BY score DESC`;
+
+                unit = `ms`;
+            }
+
+            const scores = db.prepare(statement).all();
             if(scores)
             {
                 //TODO fix leaderboard formatting
-                msg = '**Leaderboard**:';
-                counter = 1;
-                for(user of scores)
+                msg = "**Leaderboard**";
+                for(var i = 0; i < Math.min(5, scores.length); i++)
                 {
-                    msg += `\n${counter}. ${user[participantTable.cols[0]]}: ${user['score']} points`;
-                    counter ++;
+                    msg += `\n${i+1}. **${scores[i][table.cols[0]]}**: ${scores[i]['score']} ${unit}`;
                 }
-    
                 await interaction.reply(msg);
             }
             else
