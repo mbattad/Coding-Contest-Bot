@@ -1,9 +1,10 @@
-const { botToken, participantTable, answerkeyTable, submissionsTable } = require('./config');
+const { botToken, testServerId, questionChannel } = require('./config');
 const path = require('node:path');
 const fs = require('node:fs');
 const SQLITE = require('better-sqlite3');
+const schedule = require('node-schedule');
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
-const { solve } = require('./commands/solve');
+const questionInfo = require('./db/question_info.json');
 
 const db = new SQLITE('./db/data.db');
 const client = new Client({
@@ -22,20 +23,27 @@ for (const file of commandFiles) {
 	const command = require(filePath);
 	client.commands.set(command.data.name, command);
 }
-  
 client.on("ready", () => {
-  //TODO initialize the database if it doesn't exist
-  const participants = db.prepare(`SELECT * FROM ${participantTable.name}`).all();
-  console.log('found participants:');
-  for(u of participants)
-  {
-	console.log(`\t${u[participantTable.cols[0]]}`);
-  }
+  //TODO schedule question messages
   
   db.pragma("synchronous = 1");
   db.pragma("journal_mode = wal");
+  let server = client.guilds.cache.get(testServerId);
 
-  console.log("I am ready!");
+  //placeholder for testing
+  //schedule.scheduleJob(questionInfo.test.postAt, () => {
+    server.channels.cache.get(questionChannel).send(questionInfo.test.message);
+  //});
+  
+  // for(batch in questionInfo)
+  // {
+  //   schedule.scheduleJob(batch.postAt, () =>
+  //   {
+  //     server.channels.cache.get(questionChannel).send(batch.message);
+  //   });
+  // }
+
+  console.log("Finished setting up!");
 });
 
 client.on('interactionCreate', async interaction => {

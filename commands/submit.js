@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { solvedTable, submissionsTable, answerkeyTable, questionChannels } = require('../config');
+const { solvedTable, submissionsTable, answerkeyTable, discussionChannels } = require('../config');
 const { roleInfo } = require('../role');
 
 const SQLITE = require('better-sqlite3');
@@ -27,7 +27,7 @@ module.exports = {
                     AND ${solvedTable.cols[2]} = '${question}'`
                 ).get())
                 {
-                    await interaction.reply(`You can't submit answers to this question anymore.`);
+                    await interaction.reply({content: `You can't submit answers to this question anymore.`, ephemeral: true});
                 }
                 else
                 {
@@ -53,7 +53,7 @@ module.exports = {
 
                         //TODO calculate scoring based on time & difficulty
 
-                        const discussion = interaction.guild.channels.cache.get(questionChannels[question]);
+                        const discussion = interaction.guild.channels.cache.get(discussionChannels[question]);
                         discussion.permissionOverwrites.edit(submitter, { ViewChannel: true });
                         
                         await interaction.reply({content: `Correct answer!\nReceived at ${timestamp}`, ephemeral: true});
@@ -75,17 +75,17 @@ module.exports = {
                 console.log(error);
                 if(error instanceof SQLITE.SqliteError)
                 {
-                    await interaction.reply(`SQLite error: ${error.code}`);
+                    await interaction.reply({content: `SQLite error: ${error.code}`, ephemeral: true});
                 }
                 else
                 {
-                    await interaction.reply(`${error.name} while submitting; go yell at Mia.`);
+                    await interaction.reply({content: `${error.name} while submitting; go yell at Mia.`, ephemeral: true});
                 }
             }
         }
         else
         {
-            await interaction.reply(`You have to register before you can submit solutions!`);
+            await interaction.reply({content: `You have to register before you can submit solutions!`, ephemeral: true});
         }
     },
 }

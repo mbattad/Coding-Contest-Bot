@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
-const { solvedTable, questionChannels } = require('../config');
+const { solvedTable, discussionChannels } = require('../config');
 
 const SQLITE = require('better-sqlite3');
 const db = new SQLITE('./db/data.db');
@@ -22,7 +22,7 @@ module.exports =
             AND ${solvedTable.cols[2]} = '${qId}'`
         ).get())
         {
-            await interaction.reply(`You've already solved this question.`);
+            await interaction.reply({content: `You've already solved this question.`, ephemeral: true});
         }
         else
         {
@@ -47,7 +47,7 @@ module.exports =
                             VALUES ('${user.user.username}', ${user.user.discriminator}, '${qId}')`
                         ).run();
 
-                        const discussion = interaction.guild.channels.cache.get(questionChannels[qId]);
+                        const discussion = interaction.guild.channels.cache.get(discussionChannels[qId]);
                         discussion.permissionOverwrites.edit(user, { ViewChannel: true });
 
                         //TODO replace interaction text with actual answer
