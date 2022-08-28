@@ -32,14 +32,14 @@ client.on("ready", () => {
 
   //placeholder for testing
   //schedule.scheduleJob(questionInfo.test.postAt, () => {
-    server.channels.cache.get(questionChannel).send(questionInfo.test.message);
+    server.channels.cache.get(questionChannel).send(questionInfo.test.message + questionInfo.ping);
   //});
   
   // for(batch in questionInfo)
   // {
   //   schedule.scheduleJob(batch.postAt, () =>
   //   {
-  //     server.channels.cache.get(questionChannel).send(batch.message);
+  //     server.channels.cache.get(questionChannel).send(batch.message + questionInfo.ping);
   //   });
   // }
 

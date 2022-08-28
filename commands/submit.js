@@ -31,14 +31,10 @@ module.exports = {
                 }
                 else
                 {
-                    // const correct = db.prepare(
-                    //     `SELECT ${answerkeyTable.cols[1]} FROM ${answerkeyTable.name}
-                    //     WHERE ${answerkeyTable.cols[0]} = ${question}`
-                    // ).get();
-
-                    //PLACEHOLDER WHILE WE WAIT FOR QUESTIONS
-                    correct = solution;
-                    //END PLACEHOLDER
+                    const correct = db.prepare(
+                        `SELECT ${answerkeyTable.cols[1]} FROM ${answerkeyTable.name}
+                        WHERE ${answerkeyTable.cols[0]} = ${question}`
+                    ).get();
 
                     if(correct == solution)
                     {
