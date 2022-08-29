@@ -78,14 +78,8 @@ module.exports =
             const scores = db.prepare(statement).all();
             if(scores.length > 0)
             {
-                //TODO fix leaderboard formatting
-                msg = "**Leaderboard**";
-                for(var i = 0; i < Math.min(5, scores.length); i++)
-                {
-                    msg += `\n${i+1}. **${scores[i][table.cols[0]]}**: ${scores[i]['score']}${unit}`;
-                }
-
                 const leaderboard = new EmbedBuilder()
+                    .setColor('LuminousVividPink')
                     .setTitle('Leaderboard')
                     .setDescription(desc);
 
