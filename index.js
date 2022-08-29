@@ -24,15 +24,13 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 client.on("ready", () => {
-  //TODO schedule question messages
-  
   db.pragma("synchronous = 1");
   db.pragma("journal_mode = wal");
   let server = client.guilds.cache.get(testServerId);
 
   //placeholder for testing
   //schedule.scheduleJob(questionInfo.test.postAt, () => {
-    server.channels.cache.get(questionChannel).send(questionInfo.test.message + questionInfo.ping);
+  //  server.channels.cache.get(questionChannel).send(questionInfo.test.message + questionInfo.ping);
   //});
   
   // for(batch in questionInfo)

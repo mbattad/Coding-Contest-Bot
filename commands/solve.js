@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
-const { solvedTable, discussionChannels } = require('../config');
+const { answerkeyTable, solvedTable, discussionChannels } = require('../config');
 
 const SQLITE = require('better-sqlite3');
 const db = new SQLITE('./db/data.db');
@@ -50,10 +50,15 @@ module.exports =
                         const discussion = interaction.guild.channels.cache.get(discussionChannels[qId]);
                         discussion.permissionOverwrites.edit(user, { ViewChannel: true });
 
-                        //TODO replace interaction text with actual answer
+                        let answer = db.prepare(
+                            `SELECT ${answerkeyTable.cols[1]} FROM ${answerkeyTable.name}
+                            WHERE ${answerkeyTable.cols[0]} = '${qId}'`
+                        ).get();
+
+                        console.log(answer);
                         actionRow.components[0].setDisabled(true);
                         interaction.editReply({content: response, components: [actionRow], ephemeral: true});
-                        await buttonClick.reply({content: `The answer to ${qId} is...who knows?\nenjoy the discussion channel tho`, ephemeral: true});
+                        await buttonClick.reply({content: `The answer to ${qId} is...**${answer[answerkeyTable.cols[1]]}**!\nSee how others solved it in the discussion channel.`, ephemeral: true});
                     }
                     catch(error)
                     {

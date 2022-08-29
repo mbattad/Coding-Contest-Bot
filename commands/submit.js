@@ -16,7 +16,15 @@ module.exports = {
         const question = interaction.options.getString('question');
         const solution = interaction.options.getInteger('solution');
 
-        if(submitter.roles.cache.some(role => role.name === roleInfo.name))
+        if(!submitter.roles.cache.some(role => role.name === roleInfo.name))
+        {
+            await interaction.reply({content: `You have to register before you can submit solutions!`, ephemeral: true});
+        }
+        else if(!(question in discussionChannels))
+        {
+            await interaction.reply({content: `Couldn't find the question ${question}; did you use a valid argument?`, ephemeral: true});
+        }
+        else
         {
             try
             {
@@ -78,10 +86,6 @@ module.exports = {
                     await interaction.reply({content: `${error.name} while submitting; go yell at Mia.`, ephemeral: true});
                 }
             }
-        }
-        else
-        {
-            await interaction.reply({content: `You have to register before you can submit solutions!`, ephemeral: true});
         }
     },
 }
