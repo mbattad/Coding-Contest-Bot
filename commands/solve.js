@@ -55,7 +55,6 @@ module.exports =
                             WHERE ${answerkeyTable.cols[0]} = '${qId}'`
                         ).get();
 
-                        console.log(answer);
                         actionRow.components[0].setDisabled(true);
                         interaction.editReply({content: response, components: [actionRow], ephemeral: true});
                         await buttonClick.reply({content: `The answer to ${qId} is...**${answer[answerkeyTable.cols[1]]}**!\nSee how others solved it in the discussion channel.`, ephemeral: true});

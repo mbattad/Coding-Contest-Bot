@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { solvedTable, submissionsTable, answerkeyTable, discussionChannels } = require('../config');
+const { solvedTable, submissionsTable, participantTable, answerkeyTable, discussionChannels } = require('../config');
 const { roleInfo } = require('../role');
 
 const SQLITE = require('better-sqlite3');
@@ -39,12 +39,12 @@ module.exports = {
                 }
                 else
                 {
-                    const correct = db.prepare(
-                        `SELECT ${answerkeyTable.cols[1]} FROM ${answerkeyTable.name}
-                        WHERE ${answerkeyTable.cols[0]} = ${question}`
+                    const answer = db.prepare(
+                        `SELECT * FROM ${answerkeyTable.name}
+                        WHERE ${answerkeyTable.cols[0]} = '${question}'`
                     ).get();
 
-                    if(correct == solution)
+                    if(answer[answerkeyTable.cols[1]] == solution)
                     {
                         now = new Date(Date.now());
                         timestamp = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} at ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
@@ -55,7 +55,12 @@ module.exports = {
                             VALUES ('${submitter.user.username}', ${submitter.user.discriminator}, '${question}', ${now.getTime()})`
                         ).run();
 
-                        //TODO calculate scoring based on time & difficulty
+                        db.prepare(
+                            `UPDATE ${participantTable.name}
+                            SET ${participantTable.cols[1 + answer[answerkeyTable.cols[3]]]} = ${participantTable.cols[1 + answer[answerkeyTable.cols[3]]]} + 1
+                            WHERE ${participantTable.cols[0]} = '${submitter.user.username}'
+                            AND ${participantTable.cols[1]} = ${submitter.user.discriminator}`
+                        ).run();
 
                         const discussion = interaction.guild.channels.cache.get(discussionChannels[question]);
                         discussion.permissionOverwrites.edit(submitter, { ViewChannel: true });
