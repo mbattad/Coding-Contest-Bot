@@ -20,6 +20,13 @@ module.exports =
             await interaction.reply({content: `Couldn't find the question ${qId}; did you use a valid argument?`, ephemeral: true});
         }
         else if(db.prepare(
+            `SELECT * FROM ${answerkeyTable.name}
+            WHERE ${answerkeyTable.cols[0]} = '${qId}'`
+        ).get()[answerkeyTable.cols[2]] > Date.now())
+        {
+            await interaction.reply({content: `This question hasn't been posted yet.`, ephemeral: true});
+        }
+        else if(db.prepare(
             `SELECT * FROM ${solvedTable.name}
             WHERE ${solvedTable.cols[0]} = '${user.user.username}'
             AND ${solvedTable.cols[1]} = ${user.user.discriminator}
@@ -45,14 +52,14 @@ module.exports =
                 .then(async buttonClick => {
                     try
                     {
+                        const discussion = interaction.guild.channels.cache.get(discussionChannels[qId]);
+                        discussion.permissionOverwrites.edit(user, { ViewChannel: true });
+
                         db.prepare(
                             `INSERT INTO ${solvedTable.name}
                             (${solvedTable.cols[0]}, ${solvedTable.cols[1]}, ${solvedTable.cols[2]})
                             VALUES ('${user.user.username}', ${user.user.discriminator}, '${qId}')`
                         ).run();
-
-                        const discussion = interaction.guild.channels.cache.get(discussionChannels[qId]);
-                        discussion.permissionOverwrites.edit(user, { ViewChannel: true });
 
                         let answer = db.prepare(
                             `SELECT ${answerkeyTable.cols[1]} FROM ${answerkeyTable.name}

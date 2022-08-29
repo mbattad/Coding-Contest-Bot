@@ -24,6 +24,13 @@ module.exports = {
         {
             await interaction.reply({content: `Couldn't find the question ${question}; did you use a valid argument?`, ephemeral: true});
         }
+        else if(db.prepare(
+            `SELECT * FROM ${answerkeyTable.name}
+            WHERE ${answerkeyTable.cols[0]} = '${question}'`
+        ).get()[answerkeyTable.cols[2]] > Date.now())
+        {
+            await interaction.reply({content: `This question hasn't been posted yet.`, ephemeral: true});
+        }
         else
         {
             try
