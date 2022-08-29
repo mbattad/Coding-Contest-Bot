@@ -15,7 +15,11 @@ module.exports =
         const user = interaction.member;
         const qId = interaction.options.getString('question');
 
-        if(db.prepare(
+        if(!(qId in discussionChannels))
+        {
+            await interaction.reply({content: `Couldn't find the question ${qId}; did you use a valid argument?`, ephemeral: true});
+        }
+        else if(db.prepare(
             `SELECT * FROM ${solvedTable.name}
             WHERE ${solvedTable.cols[0]} = '${user.user.username}'
             AND ${solvedTable.cols[1]} = ${user.user.discriminator}
