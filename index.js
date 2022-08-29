@@ -1,4 +1,4 @@
-const { botToken, testServerId, questionChannel } = require('./config');
+const { botToken, serverId, questionChannel } = require('./config');
 const path = require('node:path');
 const fs = require('node:fs');
 const SQLITE = require('better-sqlite3');
@@ -26,20 +26,15 @@ for (const file of commandFiles) {
 client.on("ready", () => {
   db.pragma("synchronous = 1");
   db.pragma("journal_mode = wal");
-  let server = client.guilds.cache.get(testServerId);
-
-  //placeholder for testing
-  //schedule.scheduleJob(questionInfo.test.postAt, () => {
-  //  server.channels.cache.get(questionChannel).send(questionInfo.test.message + questionInfo.ping);
-  //});
+  let server = client.guilds.cache.get(serverId);
   
-  // for(batch in questionInfo)
-  // {
-  //   schedule.scheduleJob(batch.postAt, () =>
-  //   {
-  //     server.channels.cache.get(questionChannel).send(batch.message + questionInfo.ping);
-  //   });
-  // }
+  for(batch in questionInfo)
+  {
+    schedule.scheduleJob(batch.postAt, () =>
+    {
+      server.channels.cache.get(questionChannel).send(batch.message + questionInfo.ping);
+    });
+  }
 
   console.log("Finished setting up!");
 });
