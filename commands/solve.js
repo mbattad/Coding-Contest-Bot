@@ -15,7 +15,11 @@ module.exports =
         const user = interaction.member;
         const qId = interaction.options.getString('question');
 
-        if(!(qId in discussionChannels))
+        if(!submitter.roles.cache.some(role => role.name === roleInfo.name))
+        {
+            await interaction.reply({content: `You have to register before you can submit solutions!`, ephemeral: true});
+        }
+        else if(!(qId in discussionChannels))
         {
             await interaction.reply({content: `Couldn't find the question ${qId}; did you use a valid argument?`, ephemeral: true});
         }
