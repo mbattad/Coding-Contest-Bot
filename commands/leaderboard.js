@@ -91,7 +91,7 @@ module.exports =
 
                 for(let i = 0; i < Math.min(10, scores.length); i++)
                 {
-                    leaderboard.addFields({name: `${i+1}. ${scores[i][table.cols[0]]}`, value: `${scores[i]['score']}${unit}`});
+                    leaderboard.addFields({name: `${i+1}. ${scores[i][table.cols[0]]}#${scores[i][table.cols[1]]}`, value: `${scores[i]['score']}${unit}`});
                 }
 
                 await interaction.reply({embeds: [leaderboard]});
