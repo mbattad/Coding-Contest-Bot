@@ -17,7 +17,7 @@ module.exports =
 
         if(!submitter.roles.cache.some(role => role.name === roleInfo.name))
         {
-            await interaction.reply({content: `You have to register before you can submit solutions!`, ephemeral: true});
+            await interaction.reply({content: `You have to register before you can request solutions!`, ephemeral: true});
         }
         else if(!(qId in discussionChannels))
         {
