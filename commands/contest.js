@@ -1,9 +1,10 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { reportChannel } = require('../config');
 
 module.exports =
 {
     data: new SlashCommandBuilder()
-        .setName('help')
+        .setName('contest')
         .setDescription('Get an overview of contest bot commands'),
     async execute(interaction)
     {
@@ -32,8 +33,11 @@ module.exports =
                 {name: "/solve [question]", value: "Reveals the solution to a question and lets you view its discussion channel", inline: true},
                 {name: "\u200B", value: "\u200B"},
                 {name: "/leaderboard points", value: "Display the participants with the 10 highest scores", inline: true},
-                {name: "/leaderboard speed", value: "Display the participants with the 10 fastest completion times", inline: true}
-            );
+                {name: "/leaderboard speed", value: "Display the participants with the 10 fastest completion times", inline: true},
+                {name: "\u200B", value: "\u200B"},
+                {name: "Got an error?", value: `Let us know in <#${reportChannel}>!`}
+            )
+            .setFooter({text: "made with love by Mia", iconURL: "https://cdn.discordapp.com/avatars/528053306665336872/45d65cd6edb2465f9597d34d57b2aadf.webp?size=80"});
 
         await interaction.reply({embeds: [help], ephemeral: true});
     }

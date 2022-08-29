@@ -46,7 +46,7 @@ module.exports =
             let table, statement, desc, unit;
             if(group === 'points')
             {
-                desc = "Participants with the most problems solved";
+                desc = "Most problems solved";
                 const lvl = interaction.options.getInteger('level');
                 let sum = `${participantTable.cols[2]} + ${participantTable.cols[3]} + ${participantTable.cols[4]}`;
                 if(lvl)
@@ -65,7 +65,7 @@ module.exports =
             }
             else if(group === 'speed')
             {
-                desc = "Participants with the fastest completion times";
+                desc = "Fastest completion times";
                 const qId = interaction.options.getString('question');
                 let condition = ``;
                 if(qId)
@@ -92,8 +92,7 @@ module.exports =
             {
                 const leaderboard = new EmbedBuilder()
                     .setColor('LuminousVividPink')
-                    .setTitle('Leaderboard')
-                    .setDescription(desc)
+                    .setTitle(`Leaderboard: ${desc}`)
                     .setThumbnail(thumbnails[Math.floor(Math.random()*thumbnails.length)]);
 
                 for(let i = 0; i < Math.min(10, scores.length); i++)

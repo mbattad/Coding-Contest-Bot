@@ -3,7 +3,7 @@ const path = require('node:path');
 const fs = require('node:fs');
 const SQLITE = require('better-sqlite3');
 const schedule = require('node-schedule');
-const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
+const { Client, Collection, GatewayIntentBits, Partials, ActivityType } = require('discord.js');
 const questionInfo = require('./db/question_info.json');
 
 const db = new SQLITE('./db/data.db');
@@ -37,6 +37,7 @@ client.on("ready", () => {
   }
 
   console.log("Finished setting up!");
+  client.user.setActivity("/contest", {type: ActivityType.Competing});
 });
 
 client.on('interactionCreate', async interaction => {
