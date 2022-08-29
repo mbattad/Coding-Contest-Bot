@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { participantTable, solvedTable, answerkeyTable } = require('../config');
 
 const SQLITE = require('better-sqlite3');
@@ -31,14 +31,16 @@ module.exports =
         try
         {
             const group = interaction.options.getSubcommand();
-            let table, statement, unit;
+            let table, statement, desc, unit;
             if(group === 'points')
             {
+                desc = "Participants with the most problems solved";
                 const lvl = interaction.options.getInteger('level');
                 let sum = `${participantTable.cols[2]} + ${participantTable.cols[3]} + ${participantTable.cols[4]}`;
                 if(lvl)
                 {
                     sum = `${participantTable.cols[lvl]}`
+                    desc += ` (level ${lvl - 1})`;
                 }
 
                 table = participantTable;
@@ -46,15 +48,18 @@ module.exports =
                     `SELECT *, SUM(${sum}) AS score FROM ${participantTable.name}
                     GROUP BY ${participantTable.cols[0]}, ${participantTable.cols[1]}
                     ORDER BY score DESC`;
-                unit = `points`;
+
+                unit = ` solved`;
             }
             else if(group === 'speed')
             {
+                desc = "Participants with the fastest completion times";
                 const qId = interaction.options.getString('question');
                 let condition = ``;
                 if(qId)
                 {
                     condition = `AND ${solvedTable.name}.${solvedTable.cols[2]} = '${qId}'`;
+                    desc += ` (${qId})`;
                 }
 
                 table = solvedTable;
@@ -67,7 +72,7 @@ module.exports =
                     GROUP BY ${solvedTable.cols[0]}, ${solvedTable.cols[1]}
                     ORDER BY score ASC`;
 
-                unit = `hours`;
+                unit = ` hours`;
             }
 
             const scores = db.prepare(statement).all();
@@ -77,9 +82,19 @@ module.exports =
                 msg = "**Leaderboard**";
                 for(var i = 0; i < Math.min(5, scores.length); i++)
                 {
-                    msg += `\n${i+1}. **${scores[i][table.cols[0]]}**: ${scores[i]['score']} ${unit}`;
+                    msg += `\n${i+1}. **${scores[i][table.cols[0]]}**: ${scores[i]['score']}${unit}`;
                 }
-                await interaction.reply(msg);
+
+                const leaderboard = new EmbedBuilder()
+                    .setTitle('Leaderboard')
+                    .setDescription(desc);
+
+                for(let i = 0; i < Math.min(10, scores.length); i++)
+                {
+                    leaderboard.addFields({name: `${i+1}. ${scores[i][table.cols[0]]}`, value: `${scores[i]['score']}${unit}`});
+                }
+
+                await interaction.reply({embeds: [leaderboard]});
             }
             else
             {
