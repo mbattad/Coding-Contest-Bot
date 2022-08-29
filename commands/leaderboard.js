@@ -28,6 +28,18 @@ module.exports =
         ),
     async execute(interaction)
     {
+        const thumbnails = [
+            'https://cdn.discordapp.com/emojis/901999702596259892.webp?size=32&quality=lossless',
+            'https://cdn.discordapp.com/emojis/974340642983530496.webp?size=32&quality=lossless',
+            'https://cdn.discordapp.com/emojis/827184703589187654.webp?size=32&quality=lossless',
+            'https://cdn.discordapp.com/emojis/827182878483152906.webp?size=32&quality=lossless',
+            'https://cdn.discordapp.com/emojis/825509085168402482.webp?size=32&quality=lossless',
+            'https://cdn.discordapp.com/emojis/825491761873944657.webp?size=32&quality=lossless',
+            'https://cdn.discordapp.com/emojis/825482785867169792.webp?size=32&quality=lossless',
+            'https://cdn.discordapp.com/emojis/760617252125933578.webp?size=32&quality=lossless',
+            'https://cdn.discordapp.com/emojis/805536502145875999.webp?size=32&quality=lossless',
+            'https://cdn.discordapp.com/emojis/825498044211658752.webp?size=32&quality=lossless'];
+
         try
         {
             const group = interaction.options.getSubcommand();
@@ -81,7 +93,8 @@ module.exports =
                 const leaderboard = new EmbedBuilder()
                     .setColor('LuminousVividPink')
                     .setTitle('Leaderboard')
-                    .setDescription(desc);
+                    .setDescription(desc)
+                    .setThumbnail(thumbnails[Math.floor(Math.random()*thumbnails.length)]);
 
                 for(let i = 0; i < Math.min(10, scores.length); i++)
                 {
