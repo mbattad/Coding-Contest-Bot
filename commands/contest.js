@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { reportChannel } = require('../config');
+const reportChannel = process.env['reportChannel'];
 
 module.exports =
 {
